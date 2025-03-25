@@ -6,7 +6,7 @@ Python SDK to simplify integration with GRID services: https://gridgs.com
 # Main parts
 GridAuthClient - Used to authorize on GRID SSO server.
 
-GridApiClient - Client for GRID RespAPI that can work with main Grid entities (right now with sessions only).
+GridApiClient - Client for GRID RespAPI that can work with main Grid entities.
 
 GridEventSubscriber - subscriber to receive real-time events about changes in sessions (creation, deletion, starting and so on).
 
