@@ -6,7 +6,7 @@ from typing import List
 
 from gridgs.sdk.entity import frame_from_dict, Frame, FrameType
 from .base_client import BaseClient
-from .params import PaginatedQueryParams, SortQueryParam, SortBy
+from .params import PaginatedQueryParams, SortQueryParam
 
 
 class FrameSortField(Enum):
@@ -14,15 +14,16 @@ class FrameSortField(Enum):
     SESSION = 'communicationSession'
     SATELLITE = 'satellite'
     GROUND_STATION = 'groundStation'
+    TYPE = 'type'
 
 
 @dataclass(frozen=True)
-class FrameSortParam(SortBy):
-    field: FrameSortField
+class FrameSortQueryParam(SortQueryParam):
+    sort_by: FrameSortField | None = None
 
 
 @dataclass(frozen=True)
-class FrameQueryParams(PaginatedQueryParams, SortQueryParam):
+class FrameQueryParams(PaginatedQueryParams, FrameSortQueryParam):
     satellite: int | None = None
     ground_station: int | None = None
     communication_session: int | None = None
@@ -33,7 +34,7 @@ class FrameQueryParams(PaginatedQueryParams, SortQueryParam):
     def to_dict(self) -> dict:
         return {
             **PaginatedQueryParams.to_dict(self),
-            **SortQueryParam.to_dict(self),
+            **FrameSortQueryParam.to_dict(self),
             'satellite': self.satellite,
             'groundStation': self.ground_station,
             'communicationSession': self.communication_session,

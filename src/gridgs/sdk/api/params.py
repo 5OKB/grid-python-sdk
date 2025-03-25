@@ -17,16 +17,9 @@ class SortOrder(Enum):
 
 
 @dataclass(frozen=True)
-class SortBy:
-    field: Enum
-    order: SortOrder
-
-
-@dataclass(frozen=True)
 class SortQueryParam:
-    sort_by: SortBy | None = None
+    sort_by: Enum | None = None
+    sort_order: SortOrder = SortOrder.ASC
 
     def to_dict(self) -> dict:
-        return {
-            'sort_by': f'{self.sort_by.field.value}.{self.sort_by.order.value}' if isinstance(self.sort_by, SortBy) else None
-        }
+        return {'sort_by': f'{self.sort_by.value}.{self.sort_order.value}' if isinstance(self.sort_by, Enum) else None}

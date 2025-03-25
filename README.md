@@ -35,8 +35,7 @@ params = SessionQueryParams(
         satellite=1,
         ground_station=13,
         status=Session.STATUS_SUCCESS,
-        offset=0, limit=3, sort_by=SessionSortParam(SessionSortField.START_DATE, SortOrder.DESC),
-    )
+        offset=0, limit=3, sort_by=SessionSortField.START_DATE, sort_order=SortOrder.DESC)
 sessions_result = grid_api_client.find_sessions(params)
 
 print(f'Total: {sessions_result.total}')
@@ -72,7 +71,7 @@ params = FrameQueryParams(
     ground_station=13, 
     date_from=datetime.fromisoformat("2025-02-07 00:00:00"), 
     date_to=datetime.fromisoformat("2025-02-07 00:48:00"), 
-    offset=0, limit=5, sort_by=FrameSortParam(FrameSortField.CREATED_AT, SortOrder.ASC)
+    offset=0, limit=5, sort_by=FrameSortField.TYPE, sort_order=SortOrder.ASC)
     )
 
 frames_result = grid_api_client.find_frames(params, offset=0, limit=10) 

@@ -6,20 +6,20 @@ from typing import List
 
 from gridgs.sdk.entity import Session, session_from_dict
 from .base_client import BaseClient
-from .params import PaginatedQueryParams, SortBy, SortQueryParam
+from .params import PaginatedQueryParams, SortQueryParam
 
 
 class SessionSortField(Enum):
     START_DATE = 'startDateTime'
-    END_DATE = 'endDateTime'
+    END_DATE = 'losDateTime'
     SATELLITE = 'satellite'
     GROUND_STATION = 'groundStation'
     STATUS = 'status'
 
 
 @dataclass(frozen=True)
-class SessionSortParam(SortBy):
-    field: SessionSortField
+class SessionSortQueryParam(SortQueryParam):
+    field: SessionSortField | None = None
 
 @dataclass(frozen=True)
 class NonPaginatedSessionQueryParams:
@@ -42,11 +42,11 @@ class NonPaginatedSessionQueryParams:
 
 
 @dataclass(frozen=True)
-class SessionQueryParams(PaginatedQueryParams, SortQueryParam, NonPaginatedSessionQueryParams):
+class SessionQueryParams(PaginatedQueryParams, SessionSortQueryParam, NonPaginatedSessionQueryParams):
     def to_dict(self) -> dict:
         return {
             **PaginatedQueryParams.to_dict(self),
-            **SortQueryParam.to_dict(self),
+            **SessionSortQueryParam.to_dict(self),
             **NonPaginatedSessionQueryParams.to_dict(self),
         }
 
