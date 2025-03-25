@@ -22,19 +22,39 @@ grid_auth_client = GridAuthClient(open_id_client=keycloak_openid, username="user
 ## GridApiClient
 
 ```
+from gridgs.sdk.api import Client as GridApiClient
+
 grid_api_client = GridApiClient(base_url="https://api.gridgs.com" auth_client=grid_auth_client, logger=logging.getLogger('grid_api_client'))
 ```
 
 ### Get sessions
 ```
-params = SessionQueryParams(satellite=1, status=Session.STATUS_SCHEDULED)
-sessions = grid_api_client.find_sessions(params) 
+from gridgs.sdk.api import SortOrder, SessionQueryParams, SessionSortParam, SessionSortField
+
+params = SessionQueryParams(
+        satellite=1,
+        ground_station=13,
+        status=Session.STATUS_SUCCESS,
+        offset=0, limit=3, sort_by=SessionSortParam(SessionSortField.START_DATE, SortOrder.DESC),
+    )
+sessions_result = grid_api_client.find_sessions(params)
+
+print(f'Total: {sessions_result.total}')
 ```
 
 ### Predict sessions
+max - 100 sessions
 ```
-params = SessionQueryParams(satellite=1)
-sessions = grid_api_client.predict_sessions() 
+from gridgs.sdk.api import NonPaginatedSessionQueryParams
+
+params = NonPaginatedSessionQueryParams(
+    satellite=1, 
+    ground_station=13,
+    date_from=datetime.fromisoformat("2025-01-01 00:00:00"),
+    date_to=datetime.fromisoformat("2025-01-02 00:00:00"),
+    min_tca_elevation=20,
+    )
+sessions = grid_api_client.predict_sessions(params) 
 ```
 
 ### Create a session
@@ -45,8 +65,19 @@ session = grid_api_client.create_session(session)
 
 ### Get frames
 ```
-params = FrameQueryParams(satellite=1)
-frames = grid_api_client.find_frames(params) 
+from gridgs.sdk.api import SortOrder, FrameSortField, FrameSortParam, FrameQueryParams
+
+params = FrameQueryParams(
+    satellite=2, 
+    ground_station=13, 
+    date_from=datetime.fromisoformat("2025-02-07 00:00:00"), 
+    date_to=datetime.fromisoformat("2025-02-07 00:48:00"), 
+    offset=0, limit=5, sort_by=FrameSortParam(FrameSortField.CREATED_AT, SortOrder.ASC)
+    )
+
+frames_result = grid_api_client.find_frames(params, offset=0, limit=10) 
+
+print(f'Total: {frames_result.total}')
 ```
 
 ## GridEventSubscriber
