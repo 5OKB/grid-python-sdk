@@ -12,10 +12,6 @@ class BaseClient:
         self.__logger = logger
         self.__verify = verify
 
-    def __build_auth_header(self) -> dict:
-        token = self.__auth_client.token()
-        return {'Authorization': 'Bearer ' + token.access_token}
-
     def request(self, method: str, path: str, params: dict | None = None, data: dict | None = None) -> requests.Response:
         return requests.request(
             method,
@@ -25,3 +21,7 @@ class BaseClient:
             headers=self.__build_auth_header(),
             verify=self.__verify
         )
+
+    def __build_auth_header(self) -> dict:
+        token = self.__auth_client.token()
+        return {'Authorization': 'Bearer ' + token.access_token}

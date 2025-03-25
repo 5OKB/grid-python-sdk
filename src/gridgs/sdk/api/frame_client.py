@@ -51,7 +51,6 @@ class FramesResult:
 
 
 class FrameClient(BaseClient):
-
     def find_frames(self, params: FrameQueryParams) -> FramesResult:
         response = self.request('get', 'frames', params=params.to_dict())
 
