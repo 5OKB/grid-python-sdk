@@ -6,8 +6,8 @@ from typing import List
 import requests
 
 from gridgs.sdk.auth import Client as AuthClient
-from gridgs.sdk.entity import Session, session_from_dict
-from .params import SessionQueryParams
+from gridgs.sdk.entity import Session, session_from_dict, Frame, frame_from_dict
+from .params import SessionQueryParams, FrameQueryParams
 
 
 class Client:
@@ -55,6 +55,17 @@ class Client:
 
         return session_from_dict(response.json())
 
+    def find_frames(self, params: FrameQueryParams) -> List[Frame]:
+        response = requests.get(self.__base_url + '/frames', params=params.to_dict(), headers=self.__build_auth_header(), verify=self.__verify)
+
+        if response.status_code != 200:
+            raise HTTPException('Cannot get frames', response.reason, response.json())
+
+        frames = []
+        for row in response.json():
+            frames.append(frame_from_dict(row))
+
+        return frames
 
     def __build_auth_header(self) -> dict:
         token = self.__auth_client.token()

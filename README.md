@@ -25,16 +25,28 @@ grid_auth_client = GridAuthClient(open_id_client=keycloak_openid, username="user
 grid_api_client = GridApiClient(base_url="https://api.gridgs.com" auth_client=grid_auth_client, logger=logging.getLogger('grid_api_client'))
 ```
 
-### Get predicted sessions
+### Get sessions
 ```
-sessions = grid_api_client.get_predicted_sessions() 
+params = SessionQueryParams(satellite=1, status=Session.STATUS_SCHEDULED)
+sessions = grid_api_client.find_sessions(params) 
+```
+
+### Predict sessions
+```
+params = SessionQueryParams(satellite=1)
+sessions = grid_api_client.predict_sessions() 
 ```
 
 ### Create a session
-
 ```
 session = Session() # A session from get_predicted_sessions
 session = grid_api_client.create_session(session)
+```
+
+### Get frames
+```
+params = FrameQueryParams(satellite=1)
+frames = grid_api_client.find_frames(params) 
 ```
 
 ## GridEventSubscriber
