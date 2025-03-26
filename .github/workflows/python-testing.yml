@@ -39,4 +39,4 @@ jobs:
       run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
     - name: Test with pytest
       run: |
-        pytest tests/
+        pytest tests --import-mode=importlib
