@@ -1,4 +1,4 @@
 from .client import Client
+from .frame_client import FrameQueryParams, FrameSortField
 from .params import SortOrder
-from .frame_client import FrameSortField, FrameQueryParams
 from .session_client import SessionQueryParams, NonPaginatedSessionQueryParams, SessionSortField
