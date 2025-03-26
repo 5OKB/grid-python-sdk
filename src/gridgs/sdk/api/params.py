@@ -1,22 +1,25 @@
-import datetime
 from dataclasses import dataclass
+from enum import Enum
 
 
 @dataclass(frozen=True)
-class SessionQueryParams:
-    satellite: int | None = None
-    ground_station: int | None = None
-    status: str | None = None
-    date_from: datetime = None
-    date_to: datetime = None
-    min_tca_elevation: int | None = None
+class PaginatedQueryParams:
+    limit: int | None = None
+    offset: int | None = None
 
     def to_dict(self) -> dict:
-        return {
-            'satellite': self.satellite,
-            'groundStation': self.ground_station,
-            'status': self.status,
-            'fromDateTime': self.date_from,
-            'toDateTime': self.date_to,
-            'minTcaElevation': self.min_tca_elevation
-        }
+        return {'offset': self.offset, 'limit': self.limit}
+
+
+class SortOrder(Enum):
+    ASC = 'asc'
+    DESC = 'desc'
+
+
+@dataclass(frozen=True)
+class SortQueryParam:
+    sort_by: Enum | None = None
+    sort_order: SortOrder = SortOrder.ASC
+
+    def to_dict(self) -> dict:
+        return {'sort_by': f'{self.sort_by.value}.{self.sort_order.value}' if isinstance(self.sort_by, Enum) else None}

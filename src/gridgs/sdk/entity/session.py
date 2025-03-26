@@ -70,14 +70,14 @@ class Session:
         }
 
 
-def session_from_dict(ses: dict) -> Session:
+def session_from_dict(ses_dict: dict) -> Session:
     return Session(
-        id=uuid.UUID(ses['id']),
-        satellite=satellite_from_dict(ses['satellite']) if 'satellite' in ses else None,
-        ground_station=ground_station_from_dict(ses['groundStation']) if 'groundStation' in ses else None,
-        status=ses['status'] if 'status' in ses else None,
-        start_datetime=datetime.fromisoformat(ses['startDateTime']) if 'startDateTime' in ses else None,
-        end_datetime=datetime.fromisoformat(ses['endDateTime']) if 'endDateTime' in ses else None,
-        tca_coords=horizontal_coords_from_dict(ses['tcaCoords']) if 'tcaCoords' in ses else None,
-        created_by=ses['createdBy'] if 'createdBy' in ses else None,
+        id=uuid.UUID(ses_dict['id']),
+        satellite=satellite_from_dict(ses_dict['satellite']) if 'satellite' in ses_dict else None,
+        ground_station=ground_station_from_dict(ses_dict['groundStation']) if 'groundStation' in ses_dict else None,
+        status=ses_dict.get('status'),
+        start_datetime=datetime.fromisoformat(ses_dict['startDateTime']) if 'startDateTime' in ses_dict else None,
+        end_datetime=datetime.fromisoformat(ses_dict['endDateTime']) if 'endDateTime' in ses_dict else None,
+        tca_coords=horizontal_coords_from_dict(ses_dict['tcaCoords']) if 'tcaCoords' in ses_dict else None,
+        created_by=ses_dict.get('createdBy'),
     )

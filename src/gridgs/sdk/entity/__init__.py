@@ -1,4 +1,4 @@
-from .frame import Frame, frame_from_dict
+from .frame import Frame, frame_from_dict, FrameType
 from .ground_station import GroundStation, ground_station_from_dict
 from .horizontal_coords import HorizontalCoords, horizontal_coords_to_dict, horizontal_coords_from_dict
 from .satellite import Satellite, satellite_from_dict
