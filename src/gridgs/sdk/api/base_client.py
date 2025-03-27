@@ -1,4 +1,6 @@
+import json
 import logging
+from urllib.parse import urljoin
 
 import requests
 
@@ -15,9 +17,9 @@ class BaseClient:
     def request(self, method: str, path: str, params: dict | None = None, data: dict | None = None) -> requests.Response:
         return requests.request(
             method,
-            self.__base_url + '/' + path,
+            urljoin(self.__base_url, path),
             params=params,
-            data=data,
+            data=json.dumps(data) if isinstance(data, dict) and data else None,
             headers=self.__build_auth_header(),
             verify=self.__verify
         )
