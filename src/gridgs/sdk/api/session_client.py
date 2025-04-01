@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -20,6 +21,7 @@ class SessionSortField(Enum):
 @dataclass(frozen=True)
 class SessionSortQueryParam(SortQueryParam):
     field: SessionSortField | None = None
+
 
 @dataclass(frozen=True)
 class NonPaginatedSessionQueryParams:
@@ -58,7 +60,6 @@ class SessionsResult:
 
 
 class SessionClient(BaseClient):
-
     def find_sessions(self, params: SessionQueryParams) -> SessionsResult:
         response = self.request('get', 'sessions', params=params.to_dict())
 
@@ -74,6 +75,17 @@ class SessionClient(BaseClient):
             total=int(response.headers.get('Pagination-Count'))
         )
 
+    def find_session(self, id: uuid.UUID) -> Session | None:
+        response = self.request('get', f'sessions/{str(id)}')
+
+        if response.status_code == 404:
+            return None
+
+        if response.status_code != 200:
+            raise HTTPException('Can not find session', response.reason, response.json())
+
+        return session_from_dict(response.json())
+
     def predict_sessions(self, params: NonPaginatedSessionQueryParams) -> List[Session]:
         response = self.request('get', 'sessions/predict', params=params.to_dict())
 
@@ -88,6 +100,7 @@ class SessionClient(BaseClient):
 
     def create_session(self, session: Session) -> Session:
         create_params = {
+            'id': str(session.id) if isinstance(session.id, uuid.UUID) else None,
             'satellite': {'id': session.satellite.id},
             'groundStation': {'id': session.ground_station.id},
             'startDateTime': session.start_datetime.isoformat(sep='T', timespec='auto'),
@@ -100,3 +113,9 @@ class SessionClient(BaseClient):
             raise HTTPException('Can not create session', response.reason, response.json())
 
         return session_from_dict(response.json())
+
+    def delete_session(self, id: uuid.UUID) -> None:
+        response = self.request('delete', f'sessions/{str(id)}')
+
+        if response.status_code != 204:
+            raise HTTPException('Can not delete session', response.reason, response.json())
