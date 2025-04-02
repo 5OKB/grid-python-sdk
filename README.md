@@ -96,8 +96,9 @@ Receive statuses of sessions
 ```
 grid_event_subscriber = GridEventSubscriber(host="api.gridgs.com", port=1883, auth_client=grid_auth_client, logger=logging.getLogger('grid_event_subscriber'))
 
-def on_event(self, event: SessionEvent):
+def on_event(event: SessionEvent):
     session = event.session
+    type = event.type # Create, Update, Delete
 
 grid_event_subscriber.on_event(on_event)
 
