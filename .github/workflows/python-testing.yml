@@ -14,9 +14,9 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  all-tests-job:
     runs-on: ubuntu-latest
+    environment: e2e
 
     steps:
     - uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install .
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -38,5 +38,15 @@ jobs:
     - name: Setup PYTHONPATH
       run: echo "PYTHONPATH=$PWD/src:$PWD/tests:$PYTHONPATH" >> $GITHUB_ENV
     - name: Test with pytest
+      env:
+        GRID_OAUTH_URL: ${{ vars.GRID_OAUTH_URL }}
+        GRID_OAUTH_CLIENT_ID: ${{ vars.GRID_OAUTH_CLIENT_ID }}
+        GRID_OAUTH_REALM: ${{ vars.GRID_OAUTH_REALM }}
+        GRID_OAUTH_USERNAME: ${{ vars.GRID_OAUTH_USERNAME }}
+        GRID_OAUTH_PASSWORD: ${{ secrets.GRID_OAUTH_PASSWORD }}
+        GRID_OAUTH_COMPANY_ID: ${{ vars.GRID_OAUTH_COMPANY_ID }}
+        GRID_MQTT_HOST: ${{ vars.GRID_MQTT_HOST }}
+        GRID_MQTT_PORT: ${{ vars.GRID_MQTT_PORT }}
+        GRID_API_URL: ${{ vars.GRID_API_URL }}
       run: |
         pytest tests --import-mode=importlib

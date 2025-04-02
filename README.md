@@ -41,6 +41,11 @@ sessions_result = grid_api_client.find_sessions(params)
 print(f'Total: {sessions_result.total}')
 ```
 
+### Get session by Id
+```
+session = grid_api_client.find_session(session_uuid)
+```
+
 ### Predict sessions
 max - 100 sessions
 ```
@@ -56,10 +61,15 @@ params = NonPaginatedSessionQueryParams(
 sessions = grid_api_client.predict_sessions(params) 
 ```
 
-### Create a session
+### Create session
 ```
 session = Session() # A session from get_predicted_sessions
 session = grid_api_client.create_session(session)
+```
+
+### Delete session
+```
+grid_api_client.delete_session(session_uuid)
 ```
 
 ### Get frames
