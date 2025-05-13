@@ -3,11 +3,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from http.client import HTTPException
-from typing import List
+from typing import List, Iterator
+
+import requests
 
 from gridgs.sdk.entity import Session, session_from_dict
 from .base_client import BaseClient
-from .params import PaginatedQueryParams, SortQueryParam
+from .params import PaginatedQueryParams, SortQueryParam, QueryParams
 
 
 class SessionSortField(Enum):
@@ -60,20 +62,26 @@ class SessionsResult:
 
 
 class SessionClient(BaseClient):
-    def find_sessions(self, params: SessionQueryParams) -> SessionsResult:
-        response = self.request('get', 'sessions', params=params.to_dict())
 
-        if response.status_code != 200:
-            raise HTTPException('Cannot find sessions', response.reason, response.json())
+    def find_sessions(self, params: SessionQueryParams) -> SessionsResult:
+        response = self.__find_sessions_request(params)
 
         sessions = []
         for row in response.json():
             sessions.append(session_from_dict(row))
 
-        return SessionsResult(
-            sessions=sessions,
-            total=int(response.headers.get('Pagination-Count'))
-        )
+        return SessionsResult(sessions=sessions, total=int(response.headers.get('Pagination-Count')))
+
+    def iterate_sessions(self, params: SessionQueryParams) -> Iterator[Session]:
+        return self._iterate_items(params, self.__find_sessions_request, session_from_dict)
+
+    def __find_sessions_request(self, params: QueryParams) -> requests.Response:
+        response = self.request('get', 'sessions', params=params.to_dict())
+
+        if response.status_code != 200:
+            raise HTTPException('Cannot find sessions', response.reason, response.json())
+
+        return response
 
     def find_session(self, id: uuid.UUID) -> Session | None:
         response = self.request('get', f'sessions/{str(id)}')

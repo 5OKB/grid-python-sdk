@@ -1,11 +1,16 @@
+from abc import abstractmethod, ABC
 from dataclasses import dataclass
 from enum import Enum
 
+class QueryParams(ABC):
+    @abstractmethod
+    def to_dict(self) -> dict:
+        pass
 
 @dataclass(frozen=True)
-class PaginatedQueryParams:
+class PaginatedQueryParams(QueryParams):
+    offset: int  = 0
     limit: int | None = None
-    offset: int | None = None
 
     def to_dict(self) -> dict:
         return {'offset': self.offset, 'limit': self.limit}
@@ -17,7 +22,7 @@ class SortOrder(Enum):
 
 
 @dataclass(frozen=True)
-class SortQueryParam:
+class SortQueryParam(QueryParams):
     sort_by: Enum | None = None
     sort_order: SortOrder = SortOrder.ASC
 
