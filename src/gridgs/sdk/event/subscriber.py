@@ -11,10 +11,11 @@ from paho.mqtt.enums import MQTTErrorCode
 from gridgs.sdk.auth import Client as AuthClient
 from gridgs.sdk.entity import session_event_from_dict, SessionEvent, Token
 from gridgs.sdk.logger_fields import with_session_event
+from gridgs.sdk.ssl import Settings as SslSettings
 
 
 class Subscriber:
-    def __init__(self, host: str, port: int, auth_client: AuthClient, logger: logging.Logger):
+    def __init__(self, host: str, port: int, auth_client: AuthClient, ssl_settings: SslSettings | None, logger: logging.Logger):
         self.__is_running_lock = threading.Lock()
         self.__stop_event = threading.Event()
 
@@ -22,12 +23,18 @@ class Subscriber:
         self.__port = port
         self.__auth_client = auth_client
         self.__mqtt_client = PahoMqttClient(client_id='api-events-' + str(uuid.uuid4()), reconnect_on_failure=True)
+        if isinstance(ssl_settings, SslSettings):
+            self.__mqtt_client.tls_set(tls_version=ssl_settings.version)
+            self.__mqtt_client.tls_insecure_set(ssl_settings.verify)
         self.__logger = logger
 
         def mqtt_client_log_callback(client, userdata, level, buf):
             self.__logger.debug(f'PahoMqtt: {buf}')
 
         self.__mqtt_client.on_log = mqtt_client_log_callback
+
+
+
 
     def on_event(self, func: typing.Callable[[SessionEvent], None]):
         def on_message(client, userdata, msg: MQTTMessage):

@@ -4,13 +4,13 @@ Python SDK to simplify integration with GRID services: https://gridgs.com
 **It's in beta state now. Please expect changes (we'll try to keep them backward-compatible).**
 
 # Main parts
-GridAuthClient - Used to authorize on GRID SSO server.
+GridAuthClient (gridgs.sdk.auth.Client) - Used to authorize on GRID SSO server.
 
-GridApiClient - Client for GRID RespAPI that can work with main Grid entities.
+GridApiClient (gridgs.sdk.api.Client) - Client for GRID RespAPI that can work with main Grid entities.
 
-GridEventSubscriber - subscriber to receive real-time events about changes in sessions (creation, deletion, starting and so on).
+GridEventSubscriber (gridgs.sdk.event.Subscriber) - subscriber to receive real-time events about changes in sessions (creation, deletion, starting and so on).
 
-GridMQTTClient - Client for GRID MQTT API. It useful for realtime connection (receive downlink frames and send uplink frames).
+GridMQTTClient (gridgs.sdk.mqtt.Client) - Client for GRID MQTT API. It useful for realtime connection (receive downlink frames and send uplink frames).
 
 # Examples how to use
 ## GridAuthClient
@@ -20,6 +20,12 @@ from gridgs.sdk.auth import Client as GridAuthClient
 
 keycloak_openid = KeycloakOpenID(server_url="https://login.gridgs.com", client_id="grid-api", realm_name="grid")
 grid_auth_client = GridAuthClient(open_id_client=keycloak_openid, username="user@gridgs.com", password="userpass", company_id=1, logger=logging.getLogger('grid_auth_client'))
+```
+
+## SSL/TLS for MQTT
+```
+from gridgs.sdk.ssl import Settings as SslSettings
+ssl_settings = SslSettings(version=ssl.PROTOCOL_TLSv1_2, verify=True)
 ```
 
 ## GridApiClient
@@ -134,7 +140,7 @@ Receive statuses of sessions
 from gridgs.sdk.entity import SessionEvent
 from gridgs.sdk.event import Subscriber as GridEventSubscriber
 
-grid_event_subscriber = GridEventSubscriber(host="api.gridgs.com", port=1883, auth_client=grid_auth_client, logger=logging.getLogger('grid_event_subscriber'))
+grid_event_subscriber = GridEventSubscriber(host="api.gridgs.com", port=1883, auth_client=grid_auth_client, ssl_settings=None, logger=logging.getLogger('grid_event_subscriber'))
 
 def on_event(event: SessionEvent):
     session = event.session
@@ -151,7 +157,7 @@ grid_event_subscriber.run()
 from gridgs.sdk.entity import Frame
 from gridgs.sdk.mqtt import Client as GridMQTTClient
 
-grid_mqtt_client = GridMQTTClient(host="api.gridgs.com", port=1883, auth_client=grid_auth_client, logger=logging.getLogger('grid_event_subscriber'))
+grid_mqtt_client = GridMQTTClient(host="api.gridgs.com", port=1883, auth_client=grid_auth_client, ssl_settings=None, logger=logging.getLogger('grid_event_subscriber'))
 
 def on_downlink_frame(frame: Frame):
     pass
