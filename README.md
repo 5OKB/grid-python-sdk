@@ -22,12 +22,6 @@ keycloak_openid = KeycloakOpenID(server_url="https://login.gridgs.com", client_i
 grid_auth_client = GridAuthClient(open_id_client=keycloak_openid, username="user@gridgs.com", password="userpass", company_id=1, logger=logging.getLogger('grid_auth_client'))
 ```
 
-## SSL/TLS for MQTT
-```
-from gridgs.sdk.ssl import Settings as SslSettings
-ssl_settings = SslSettings(version=ssl.PROTOCOL_TLSv1_2, verify=True)
-```
-
 ## GridApiClient
 
 ```
@@ -131,6 +125,15 @@ params = FrameQueryParams(
 for frame in grid_api_client.iterate_frames(params):
     print(frame)
 ```
+
+## SSL/TLS for GridEventSubscriber and GridMQTTClient
+```
+from gridgs.sdk.ssl import Settings as SslSettings
+ssl_settings = SslSettings(version=ssl.PROTOCOL_TLSv1_2, verify=True)
+```
+the arguments have defaults values.
+
+In a case of usage ssl_settings use SSL/TLS port **8883**
 
 ## GridEventSubscriber
 
