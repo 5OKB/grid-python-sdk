@@ -10,12 +10,13 @@ from paho.mqtt.enums import MQTTErrorCode
 from gridgs.sdk.auth import Client as AuthClient
 from gridgs.sdk.entity import Frame, frame_from_dict, Session
 from gridgs.sdk.logger_fields import with_frame, with_session, with_frame_payload_size
+from gridgs.sdk.ssl import Settings as SslSettings
 from .exceptions import SessionNotFoundException, SendUplinkException
 from .interface import Connector, Sender, Receiver
 
 
 class Client(Connector, Sender, Receiver):
-    def __init__(self, host: str, port: int, auth_client: AuthClient, logger: logging.Logger):
+    def __init__(self, host: str, port: int, auth_client: AuthClient, ssl_settings: SslSettings | None, logger: logging.Logger):
         self.__is_running_lock = threading.Lock()
         self.__stop_event = threading.Event()
 
@@ -23,6 +24,9 @@ class Client(Connector, Sender, Receiver):
         self.__port = port
         self.__auth_client = auth_client
         self.__mqtt_client = PahoMqttClient(client_id='api-frames-' + str(uuid.uuid4()), reconnect_on_failure=True)
+        if isinstance(ssl_settings, SslSettings):
+            self.__mqtt_client.tls_set(tls_version=ssl_settings.version)
+            self.__mqtt_client.tls_insecure_set(ssl_settings.verify)
         self.__session: Session | None = None
         self.__logger = logger
 

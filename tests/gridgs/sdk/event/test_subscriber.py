@@ -33,7 +33,7 @@ class TestSubscriber:
         cls.auth_client = AuthClient(open_id_client=keycloak_openid, username=env.get('GRID_OAUTH_USERNAME'), password=env.get('GRID_OAUTH_PASSWORD'), company_id=int(env.get('GRID_OAUTH_COMPANY_ID')),
                                      logger=logging.getLogger('auth_client'))
         cls.api_client = ApiClient(base_url=env.get('GRID_API_URL'), auth_client=cls.auth_client, logger=logging.getLogger('api_client'))
-        cls.event_subscriber = GridEventSubscriber(host=env.get('GRID_MQTT_HOST'), port=int(env.get('GRID_MQTT_PORT')), auth_client=cls.auth_client, logger=logging.getLogger('event_subscriber'))
+        cls.event_subscriber = GridEventSubscriber(host=env.get('GRID_MQTT_HOST'), port=int(env.get('GRID_MQTT_PORT')), auth_client=cls.auth_client, ssl_settings=None, logger=logging.getLogger('event_subscriber'))
         cls.events_collector = EventsCollector()
 
         # DI done
