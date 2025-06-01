@@ -1,6 +1,6 @@
 [project]
 name = "gridgs-sdk"
-version = "1.0.23"
+version = "1.0.24"
 authors = [
   { name="5OKB", email="dev@5okb.com" },
 ]
