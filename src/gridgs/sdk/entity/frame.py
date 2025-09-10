@@ -8,6 +8,7 @@ from .ground_station import GroundStation, ground_station_from_dict
 from .satellite import Satellite, satellite_from_dict
 from .session import Session, session_from_dict
 
+
 class FrameType(Enum):
     RECEIVED = 1
     SENT = 2

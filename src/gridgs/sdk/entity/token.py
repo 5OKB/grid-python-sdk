@@ -17,4 +17,3 @@ class Token:
     @property
     def access_token(self) -> str:
         return self.__access_token
-

@@ -59,11 +59,16 @@ class TestSessionClient:
 
     def test_predict_and_create_and_delete_success(self):
         expected_from = datetime.now(timezone.utc) + timedelta(days=14)
-        expected_to = expected_from + timedelta(days=7)
+        expected_to = expected_from + timedelta(days=3)
         expected_min_tca_elevation = 10
 
         # Predicting sessions
-        query_params = NonPaginatedSessionQueryParams(date_from=expected_from, date_to=expected_to, min_tca_elevation=expected_min_tca_elevation)
+        query_params = NonPaginatedSessionQueryParams(
+            satellite=env.get('GRID_SATELLITE_ID'),
+            date_from=expected_from,
+            date_to=expected_to,
+            min_tca_elevation=expected_min_tca_elevation
+        )
 
         sessions = self.api_client.predict_sessions(query_params)
 

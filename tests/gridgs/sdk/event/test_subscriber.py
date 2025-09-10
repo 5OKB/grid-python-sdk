@@ -83,7 +83,11 @@ class TestSubscriber:
 
 
 def predict_and_create_session(api_client: ApiClient) -> Session:
-    predicted_sessions = api_client.predict_sessions(NonPaginatedSessionQueryParams(date_from=datetime.now(timezone.utc) + timedelta(days=14)))
+    query_params = NonPaginatedSessionQueryParams(
+        satellite=env.get('GRID_SATELLITE_ID'),
+        date_from=datetime.now(timezone.utc) + timedelta(days=14),
+    )
+    predicted_sessions = api_client.predict_sessions(query_params)
     assert len(predicted_sessions) > 0, 'Can not predict sessions. Check free slots on GRID-GS side'
 
     # Create (should trigger the event)
