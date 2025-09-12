@@ -2,14 +2,16 @@ from abc import abstractmethod, ABC
 from dataclasses import dataclass
 from enum import Enum
 
+
 class QueryParams(ABC):
     @abstractmethod
     def to_dict(self) -> dict:
         pass
 
+
 @dataclass(frozen=True)
 class PaginatedQueryParams(QueryParams):
-    offset: int  = 0
+    offset: int = 0
     limit: int | None = None
 
     def to_dict(self) -> dict:

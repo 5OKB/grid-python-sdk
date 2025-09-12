@@ -33,9 +33,6 @@ class Subscriber:
 
         self.__mqtt_client.on_log = mqtt_client_log_callback
 
-
-
-
     def on_event(self, func: typing.Callable[[SessionEvent], None]):
         def on_message(client, userdata, msg: MQTTMessage):
             try:

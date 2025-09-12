@@ -66,7 +66,7 @@ class Client(Connector, Sender, Receiver):
             self.__mqtt_client.on_connect = __on_mqtt_connect
 
             def __on_subscribed(client: PahoMqttClient, userdata, mid, granted_qos):
-                self.__logger.info(f'Subscribed', extra=with_session(session))
+                self.__logger.info('Subscribed', extra=with_session(session))
                 if on_connected:
                     on_connected(session)
 
