@@ -1,6 +1,11 @@
 # GRID Python SDK
 Python SDK to simplify integration with GRID services: https://gridgs.com
 
+Released packages are published onto pypi: https://pypi.org/project/gridgs-sdk/
+
+Use `pip install gridgs-sdk` to install.
+
+
 **It's in beta state now. Please expect changes (we'll try to keep them backward-compatible).**
 
 # Main parts
