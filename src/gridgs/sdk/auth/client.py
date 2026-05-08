@@ -10,12 +10,11 @@ from gridgs.sdk.entity import Token
 class Client:
     __PRE_EXPIRATION_SECONDS = 20
 
-    def __init__(self, open_id_client: KeycloakOpenID, username: str, password: str, company_id: int, logger: logging.Logger):
+    def __init__(self, open_id_client: KeycloakOpenID, username: str, password: str, logger: logging.Logger):
         self.__lock = Lock()
         self.__open_id_client = open_id_client
         self.__username = username
         self.__password = password
-        self.__company_id = company_id
         self.__token: Token | None = None
         self.__token_expires_at: datetime = datetime.min
         self.__refresh_token_value: str = ''
@@ -46,7 +45,7 @@ class Client:
         self.__set_tokens_values(oauth_token)
 
     def __set_tokens_values(self, oauth_token: dict):
-        self.__token = Token(username=self.__username, company_id=self.__company_id, access_token=oauth_token.get('access_token'))
+        self.__token = Token(username=self.__username, access_token=oauth_token.get('access_token'))
         self.__token_expires_at = datetime.now() + timedelta(seconds=int(oauth_token.get('expires_in', 0))) - timedelta(seconds=self.__PRE_EXPIRATION_SECONDS)
 
         self.__refresh_token_value = oauth_token.get('refresh_token')
