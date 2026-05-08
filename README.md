@@ -37,7 +37,6 @@ grid_auth_client = GridAuthClient(
     open_id_client=keycloak_openid, 
     username="user@gridgs.com", 
     password="userpass", 
-    company_id=1, 
     logger=logging.getLogger('grid_auth_client')
 )
 ```
@@ -186,7 +185,7 @@ ssl_settings = SslSettings(version=ssl.PROTOCOL_TLSv1_2, verify=True)
 
 ### GridEventSubscriber
 
-Receive session status events:
+Receive session status events for satellite:
 
 ```python
 from gridgs.sdk.entity import SessionEvent
@@ -195,7 +194,8 @@ from gridgs.sdk.event import Subscriber as GridEventSubscriber
 grid_event_subscriber = GridEventSubscriber(
     host="api.gridgs.com", 
     port=1883, 
-    auth_client=grid_auth_client, 
+    auth_client=grid_auth_client,
+    satellite_id=2,
     ssl_settings=None, 
     logger=logging.getLogger('grid_event_subscriber')
 )

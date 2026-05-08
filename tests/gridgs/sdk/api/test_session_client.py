@@ -17,7 +17,7 @@ class TestSessionClient:
     @classmethod
     def setup_class(cls):
         keycloak_openid = KeycloakOpenID(server_url=env.get('GRID_OAUTH_URL'), client_id=env.get('GRID_OAUTH_CLIENT_ID'), realm_name=env.get('GRID_OAUTH_REALM'))
-        cls.auth_client = AuthClient(open_id_client=keycloak_openid, username=env.get('GRID_OAUTH_USERNAME'), password=env.get('GRID_OAUTH_PASSWORD'), company_id=int(env.get('GRID_OAUTH_COMPANY_ID')),
+        cls.auth_client = AuthClient(open_id_client=keycloak_openid, username=env.get('GRID_OAUTH_USERNAME'), password=env.get('GRID_OAUTH_PASSWORD'),
                                      logger=logging.getLogger('auth_client'))
         cls.api_client = ApiClient(base_url=env.get('GRID_API_URL'), auth_client=cls.auth_client, logger=logging.getLogger('api_client'))
 

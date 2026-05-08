@@ -9,19 +9,20 @@ from paho.mqtt.client import MQTTMessage
 from paho.mqtt.enums import MQTTErrorCode
 
 from gridgs.sdk.auth import Client as AuthClient
-from gridgs.sdk.entity import session_event_from_dict, SessionEvent, Token
+from gridgs.sdk.entity import session_event_from_dict, SessionEvent
 from gridgs.sdk.logger_fields import with_session_event
 from gridgs.sdk.ssl import Settings as SslSettings
 
 
 class Subscriber:
-    def __init__(self, host: str, port: int, auth_client: AuthClient, ssl_settings: SslSettings | None, logger: logging.Logger):
+    def __init__(self, host: str, port: int, auth_client: AuthClient, satellite_id: int, ssl_settings: SslSettings | None, logger: logging.Logger):
         self.__is_running_lock = threading.Lock()
         self.__stop_event = threading.Event()
 
         self.__host = host
         self.__port = port
         self.__auth_client = auth_client
+        self.__satellite_id = satellite_id
         self.__mqtt_client = PahoMqttClient(client_id='api-events-' + str(uuid.uuid4()), reconnect_on_failure=True)
         if isinstance(ssl_settings, SslSettings):
             self.__mqtt_client.tls_set(tls_version=ssl_settings.version)
@@ -51,7 +52,7 @@ class Subscriber:
 
             self.__logger.info('Starting')
 
-            token = self.__get_token_and_set_credentials()
+            self.__set_credentials()
 
             def __on_connect(client: PahoMqttClient, userdata, flags, reason_code):
                 if self.__stop_event.is_set():
@@ -60,14 +61,14 @@ class Subscriber:
                     return
 
                 self.__logger.info('Connected. Subscribing')
-                client.subscribe(topic=_build_sessions_event_topic(token.company_id))
+                client.subscribe(topic=_build_sessions_event_topic(self.__satellite_id))
 
             self.__mqtt_client.on_connect = __on_connect
 
             def __on_disconnect(client, userdata, rc):
                 self.__logger.info(f'Disconnected: {error_string(rc)}')
                 if rc != MQTT_ERR_SUCCESS and not self.__stop_event.is_set():
-                    self.__get_token_and_set_credentials()
+                    self.__set_credentials()
 
             self.__mqtt_client.on_disconnect = __on_disconnect
 
@@ -79,11 +80,10 @@ class Subscriber:
         self.__stop_event.set()
         return self.__mqtt_client.disconnect()
 
-    def __get_token_and_set_credentials(self) -> Token:
+    def __set_credentials(self):
         token = self.__auth_client.token()
         self.__mqtt_client.username_pw_set(username=token.username, password=token.access_token)
-        return token
 
 
-def _build_sessions_event_topic(company_id: int) -> str:
-    return f'company/{company_id}/session_event'
+def _build_sessions_event_topic(satellite_id: int) -> str:
+    return f'satellite/{satellite_id}/events/sessions'
