@@ -42,7 +42,7 @@ class Client(Connector, Sender, Receiver):
 
         self.__mqtt_client.on_message = __on_message
 
-    def connect(self, session: Session, on_connected: Callable[[Session], None] | None = None):
+    def connect(self, session: Session, on_connected: Callable[[Session], None] | None = None, threaded: bool = False):
         if not isinstance(session, Session):
             raise SessionNotFoundException("Pass session to connect")
         with self.__is_running_lock:
@@ -81,7 +81,10 @@ class Client(Connector, Sender, Receiver):
 
             self.__set_credentials()
             self.__mqtt_client.connect(self.__host, self.__port)
-            self.__mqtt_client.loop_forever(retry_first_connection=True)
+            if threaded:
+                self.__mqtt_client.loop_start()
+            else:
+                self.__mqtt_client.loop_forever(retry_first_connection=True)
 
     def disconnect(self) -> MQTTErrorCode:
         self.__logger.info('Disconnecting', extra=with_session(self.__session))
