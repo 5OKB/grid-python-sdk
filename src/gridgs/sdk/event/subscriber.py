@@ -46,7 +46,7 @@ class Subscriber:
 
         self.__mqtt_client.on_message = on_message
 
-    def run(self):
+    def run(self, threaded: bool = False):
         with self.__is_running_lock:
             self.__stop_event.clear()
 
@@ -73,7 +73,10 @@ class Subscriber:
             self.__mqtt_client.on_disconnect = __on_disconnect
 
             self.__mqtt_client.connect(self.__host, self.__port)
-            self.__mqtt_client.loop_forever(retry_first_connection=True)
+            if threaded:
+                self.__mqtt_client.loop_start()
+            else:
+                self.__mqtt_client.loop_forever(retry_first_connection=True)
 
     def stop(self) -> MQTTErrorCode:
         self.__logger.info('Stopping...')
